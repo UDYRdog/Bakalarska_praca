@@ -1,0 +1,85 @@
+from microbit import *
+
+uart.init(baudrate=115200)
+
+while True:
+    # Čítanie joysticku
+    x = pin1.read_analog()  # Joystick X-axis
+    y = pin2.read_analog()  # Joystick Y-axis
+
+    # Určenie smeru na základe X a Y
+    if x < 400 and y > 600:
+        uart.write("UP-LEFT\n")
+    elif x > 600 and y > 600:
+        uart.write("UP-RIGHT\n")
+    elif x < 400 and y < 400:
+        uart.write("DOWN-LEFT\n")
+    elif x > 600 and y < 400:
+        uart.write("DOWN-RIGHT\n")
+    elif x < 400:
+        uart.write("LEFT\n")
+    elif x > 600:
+        uart.write("RIGHT\n")
+    elif y > 600:
+        uart.write("UP\n")
+    elif y < 400:
+        uart.write("DOWN\n")
+    else:
+        uart.write("CENTER\n")  
+
+    
+    if pin5.read_digital() == 0:  # Tlačidlo A
+        uart.write("BUTTON_A\n")
+    elif pin11.read_digital() == 0:  # Tlačidlo B
+        uart.write("BUTTON_B\n")
+    elif pin15.read_digital() == 0:  # Tlačidlo C
+        uart.write("BUTTON_C\n")
+    elif pin14.read_digital() == 0:  # Tlačidlo D
+        uart.write("BUTTON_D\n")
+    elif pin13.read_digital() == 0:  # Tlačidlo E
+        uart.write("BUTTON_E\n")
+    elif pin12.read_digital() == 0:  # Tlačidlo F
+        uart.write("BUTTON_F\n")
+    elif pin8.read_digital() == 0:
+        uart.write("J_PRESS\n") 
+
+    sleep(100)  
+
+
+
+
+Dať kod do microbitpythonu
+
+
+uart.init(): Nastaví sériovú komunikáciu (UART) so zvolenou rýchlosťou prenosu (baudrate) 115200 bitov za sekundu.
+Táto komunikácia umožňuje odosielanie údajov z micro:bitu do iného zariadenia.
+
+
+
+
+Name	PIN	Function
+A	Pin5	Button A
+B	Pin11	Button B
+C	Pin15	Button C
+D	Pin14	Button D
+E	Pin13	Button E
+F	Pin12	Button F
+X	Pin1	Joystick X
+Y	Pin2	Joystick Y
+P	Pin8	Joystick Press
+Buzzer	Pin0	Buzzer
+
+
+
+UART spojenie na komunikáciu micro:bitu s hrou
+
+Na komunikáciu medzi micro:bitom a herným softvérom sme použili UART spojenie (Universal Asynchronous Receiver-Transmitter), ktoré umožňuje výmenu údajov medzi zariadeniami cez sériové rozhranie. Táto metóda je jednoduchá, efektívna a vhodná pre prenos údajov v reálnom čase.
+
+Ako funguje UART spojenie:
+Princíp prenosu:
+UART používa dvojicu signálov, jeden na odosielanie dát (TX – Transmit) a druhý na ich prijímanie (RX – Receive). Prenos dát je asynchrónny, čo znamená, že nie je potrebný ďalší signál pre synchronizáciu (napríklad hodinový signál).
+
+Konfigurácia UART spojenia na micro:bit:
+Micro:bit odosiela údaje o pohybe joysticku (X a Y osi) a stave tlačidla cez TX pin.
+Pripojené zariadenie (napríklad počítač, na ktorom beží hra) prijíma tieto údaje cez RX pin.
+Na zabezpečenie správneho prenosu dát sme nastavili rýchlosť prenosu (baud rate) na 9600 bps, čo je štandardná hodnota dostatočná pre plynulý prenos údajov.
