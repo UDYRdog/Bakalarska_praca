@@ -1,0 +1,65 @@
+from microbit import *
+import utime
+
+uart.init(baudrate=115200)
+pin5.set_pull(pin5.PULL_UP)
+pin11.set_pull(pin11.PULL_UP)
+pin12.set_pull(pin12.PULL_UP)
+pin13.set_pull(pin13.PULL_UP)
+pin14.set_pull(pin14.PULL_UP)
+pin15.set_pull(pin15.PULL_UP)
+
+buttons = {'A': pin5, 'B': pin11, 'C': pin15, 'D': pin14, 'E': pin13, 'F': pin12}
+
+JOYSTICK_CENTER_MIN, JOYSTICK_CENTER_MAX = 400, 600
+joystick_active, last_joystick_time, joystick_cooldown = False, 0, 200
+
+while True:
+    
+    x = pin1.read_analog()
+    y = pin2.read_analog()
+    current_time = utime.ticks_ms()
+    if (x < JOYSTICK_CENTER_MIN or x > JOYSTICK_CENTER_MAX or 
+        y < JOYSTICK_CENTER_MIN or y > JOYSTICK_CENTER_MAX):
+        if not joystick_active and utime.ticks_diff(current_time, last_joystick_time) > joystick_cooldown:
+            uart.write("BTNC\n")
+            joystick_active = True
+            last_joystick_time = current_time
+    else:
+        joystick_active = False
+
+    a = buttons['A'].read_digital() == 0
+    b = buttons['B'].read_digital() == 0
+    c = buttons['C'].read_digital() == 0
+    d = buttons['D'].read_digital() == 0
+    e = buttons['E'].read_digital() == 0
+    f = buttons['F'].read_digital() == 0
+
+    if c and a and not (b or d or e or f):
+        uart.write("COMBO_1\n")
+    elif c and b and not (a or d or e or f):
+        uart.write("COMBO_2\n")
+    elif d and a and not (b or c or e or f):
+        uart.write("COMBO_3\n")
+    elif a and b and not (c or d or e or f):
+        uart.write("COMBO_4\n")
+    elif e and d and not (a or b or c or f):
+        uart.write("JUMP_FORW\n")
+    elif e and f and not (a or b or c or d):
+        uart.write("JUMP_BACK\n")
+    elif b and (d or f) and not (a or c or e):
+        uart.write("BUTTON_B\n")
+    elif d and not (a or b or c or e or f):
+        uart.write("BUTTON_D\n")
+    elif f and not (a or b or c or d or e):
+        uart.write("BUTTON_F\n")
+    elif e and not (a or b or c or d or f):
+        uart.write("BUTTON_E\n")
+    elif c and not (a or b or d or e or f):
+        uart.write("BUTTON_C\n")
+    elif a and not (b or c or d or e or f):
+        uart.write("BUTTON_A\n")
+    elif b and not (a or c or d or e or f):
+        uart.write("BUTTON_B\n")
+
+    sleep(20)
