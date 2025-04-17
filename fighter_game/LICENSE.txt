@@ -1,0 +1,4 @@
+Portions of this software are derived from the original Street Pyghter (2011) project:
+https://code.google.com/archive/p/street-pyghter/
+
+Original license: New BSD License
